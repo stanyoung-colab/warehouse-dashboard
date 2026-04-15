@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # 数据库服务
+  db:
+    image: mysql:8.0
+    container_name: warehouse_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: warehouse_dashboard
+      MYSQL_USER: dashboard_user
+      MYSQL_PASSWORD: dashboard_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db_data:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d
+    networks:
+      - warehouse_net
+
+  # Redis 缓存
+  redis:
+    image: redis:alpine
+    container_name: warehouse_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis_data:/data
+    networks:
+      - warehouse_net
+
+  # 后端服务
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: warehouse_backend
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - REDIS_HOST=redis
+      - NODE_ENV=production
+    depends_on:
+      - db
+      - redis
+    networks:
+      - warehouse_net
+
+  # 前端服务
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: warehouse_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - warehouse_net
+
+networks:
+  warehouse_net:
+    driver: bridge
