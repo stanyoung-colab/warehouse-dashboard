@@ -1,0 +1,19 @@
+{
+  "name": "warehouse-dashboard",
+  "version": "1.0.0",
+  "description": "仓库管理系统 - 数据看板",
+  "main": "index.js",
+  "scripts": {
+    "dev": "echo 'Development mode'",
+    "build": "echo 'Build project'",
+    "start": "echo 'Start production'"
+  },
+  "keywords": [
+    "warehouse",
+    "dashboard",
+    "logistics",
+    "inventory"
+  ],
+  "author": "DevTeam",
+  "license": "MIT"
+}
